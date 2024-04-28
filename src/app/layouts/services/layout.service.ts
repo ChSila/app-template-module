@@ -42,26 +42,41 @@ export class LayoutService {
   };
 
   private configUpdate = new Subject<AppConfig>();
-
   private overlayOpen = new Subject<any>();
 
   configUpdate$ = this.configUpdate.asObservable();
+  overlayOpen$ = this.overlayOpen.asObservable();
 
   constructor() {}
 
   onMenuToggle() {
-    console.log(this.isOverlay());
+    console.log('is Overlay', this.isOverlay());
     if (this.isOverlay()) {
       this.state.overlayMenuActive = !this.state.overlayMenuActive;
       if (this.state.overlayMenuActive) {
         this.overlayOpen.next(null);
       }
     }
-    console.log(this.configUpdate);
-    console.log(this.configUpdate$);
+
+    console.log('is Destop', this.isDesktop());
+
+    if (this.isDesktop()) {
+      this.state.staticMenuDesktopInactive =
+        !this.state.staticMenuDesktopInactive;
+    } else {
+      this.state.staticMenuMobileActive = !this.state.staticMenuMobileActive;
+
+      if (this.state.staticMenuMobileActive) {
+        this.overlayOpen.next(null);
+      }
+    }
   }
 
   isOverlay() {
     return this.config.menuMode === 'overlay';
+  }
+
+  isDesktop() {
+    return window.innerWidth > 991;
   }
 }
